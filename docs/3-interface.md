@@ -198,8 +198,65 @@ let ct_1 = new ComplexType(1, "ct_1")
 let ct_2 = new ComplexType('abc', "ct_2")
 let ct_3 = new ComplexType(true, "test")
 ```
+3번째 변수에서 컴파일 오류가 난다.
+```
+No overload matches this call.
+  Overload 1 of 2, '(idArg: number, nameArg: string): ComplexType', gave the following error.
+    Argument of type 'true' is not assignable to parameter of type 'number'.
+  Overload 2 of 2, '(idArg: string, nameArg: string): ComplexType', gave the following error.
+    Argument of type 'true' is not assignable to parameter of type 'string'.(2769)
+```
+함수 오버로드 규칙에 따라 마지막 시그니쳐가 any라도 그건 any가 아니다.\
+```
+let ct_2 = new ComplexType('abc', 'ct_2')
+ct_2.print()
 
+```
+```
+class ComplexType implements IComplexType {
+    id: number
+    name: string
+    constructor(idArg: number, nameArg: string)
+    constructor(idArg: string, nameArg: string)
+    constructor(idArg: any, nameArg: any) {
+        this.id = idArg
+        // careful - 숫자 타입에 문자열을 할당함
+        this.name = nameArg
+    }
+}
+```
+이런 경우 타입 가드를 사용해야한다. 
+```
+constructor(idArg: any, nameArg: any) {
+    if (typeof idArg === 'number') {
+        this.id = idArg
+    }
+    // 주의 - 문자열을 숫자 타입에 할당한다
+    this.name = nameArg
+}
+```
+```
+// 2개 다 유효
+ct_1.usingTheAnyKeyword(true)
+ct_1.usingTheAnyKeyword({ id: 1, name: 'string' })
 
+// 2개 다 유효
+ct_1.usingTheAnyKeyword(1)
+ct_1.usingTheAnyKeyword()
+
+// 2개 다 유효
+ct_1.usingDefaultParameters(2)
+ct_1.usingDefaultParameters()
+
+// 2개 다 유효
+ct_1.usingRestSyntax(1,2,3)
+ct_1.usingRestSyntax(1,2,3,4,5)
+
+function myCallbackFunction(id: number): string {
+    return id.toString()
+}
+ct_1.usingFunctionCallbacks(myCallbacFunction)
+```
 
 
 
