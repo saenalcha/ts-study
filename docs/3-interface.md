@@ -402,9 +402,90 @@ console.log(`StaticProperty.count = ${StaticProperty.count}`)
 // StaticProperty.count = 2
 ```
 
+## 네임스페이스
+```
+namespace FirstNameSpace {
+    class NotExported {
+    }
+    export class NameSpaceClass {
+        id: number
+    }
+}
 
+let firstNameSpace = new FirstNameSpace.NameSpaceClass()
+let notExported = new FirstNameSpace.NotExported()
 
+// export 키워드를 사용하지 않으면 오류가 발생한다
+// Property 'NotExported' does not exist on type 'typeof FirstNameSpace'.(2339)
 
+namespace SecondNameSpace {
+    export class NameSpaceClass {
+        name: string
+    }
+}
+// 다른 클래스로 보기 때문에 오류가 발생하지 않는다
+let secondNameSpace = new SecondNameSpace.NameSpaceClass()
+```
+# 상속 inheritance
+## 인터페이스 상속
 
+```
+interface IBase {
+    id: number
+}
 
+interface IDerivedFromBase extends IBase {
+    name: string
+}
 
+class InterfaceInheritanceClass implements IDerivedFromBase {
+    id: number
+    name: string
+}
+```
+
+## 클래스 상속
+```
+class BaseClass implements IBase {
+    id: number
+}
+
+class DerivedFromClass extends BaseClass implements IDerivedFromBase {
+    name: string
+}
+타입스크립트는 다중 상속을 지원하지 않는다
+```
+
+```
+인터페이스는 여러 개를 구현할 수 있다
+interface IFirstInterface {
+    id: number
+}
+interface ISecondInterface {
+    name: string
+}
+class MultipleInterfaces implements
+    IFirstInterface, ISecondInterface {
+        id: number
+        name: string
+}
+```
+
+## super 키워드
+```
+class BaseClassWithConstructor {
+    private id: number
+    constructor(_id: number) {
+        this.id = _id
+    }
+}
+
+class DerivedClassWithConstructor extends
+    BaseClassWithConstructor {
+        private name: string
+        constructor(_id: number, _name: string) {
+            super(_id)
+            this.name = _name
+        }
+}
+```
