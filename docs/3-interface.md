@@ -235,6 +235,7 @@ constructor(idArg: any, nameArg: any) {
     this.name = nameArg
 }
 ```
+아래는 모두 유효하다./
 ```
 // 2개 다 유효
 ct_1.usingTheAnyKeyword(true)
@@ -257,6 +258,32 @@ function myCallbackFunction(id: number): string {
 }
 ct_1.usingFunctionCallbacks(myCallbacFunction)
 ```
+
+## 인터페이스 함수 정의
+인터페이스 정의에 새로 추가된 함수에 대한 정의를 추가해야한다.
+```
+interface IComplexType {
+    id: number
+    name: string
+    print(): string
+    usingTheAnyKeyword(arg1: any): any
+    usingOptionalParameters(optionalArg1?: number)
+    usingDefaultParameters(defaultArg1?: number)
+    usingRestSyntax(...argArray: number [])
+    usingFunctionalCallbacks(callback: (id: number) => string)
+}
+```
+* 인터페이스 함수 정의는 클래스 함수 정의와 다르다
+* 변수나 값을 가질 수 없다
+* 클래스 함수와 유하사지만, 생성자 함수를 포함할 수 없다
+
+```
+interface IComplexType {
+    constructor(arg1: any, arg2: any)
+}
+```
+인터페이스에 생성자 함수를 포함시키면 컴파일 오류가 발생한다.
+
 
 
 
