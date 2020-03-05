@@ -282,7 +282,34 @@ interface IComplexType {
     constructor(arg1: any, arg2: any)
 }
 ```
-인터페이스에 생성자 함수를 포함시키면 컴파일 오류가 발생한다.
+인터페이스에 생성자 함수를 포함시키면 컴파일 오류가 발생한다./
+
+## 클래스 수정자
+public으로 설정한 클래스 속성은 어디서나 접근할 수 있다.
+```
+class ClassWithPublicProperty {
+    public id: number
+}
+
+let publicAccess = new ClassWithPublicProperty()
+publicAccess.id = 10
+```
+```
+class ClassWithPrivateProperty {
+    private id: number
+    constructor(_id: number) {
+        this.id = _id
+    }
+}
+
+let privateAccess = new ClassWithPrivateProperty(10)
+privateAccess.id = 20
+
+이렇게 오류가 난다
+// Property 'id' is private and only accessible within class 'ClassWithPrivateProperty'.(2341)
+```
+** 클래스 함수의 기본값은 public이다 **
+
 
 
 
