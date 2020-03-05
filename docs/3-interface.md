@@ -308,7 +308,101 @@ privateAccess.id = 20
 이렇게 오류가 난다
 // Property 'id' is private and only accessible within class 'ClassWithPrivateProperty'.(2341)
 ```
-** 클래스 함수의 기본값은 public이다 **
+**클래스 함수의 기본값은 public이다**
+
+## 생성자 접근 제어자 Constructor Access Modifier
+```
+class classWithAutomaticProperties {
+    constructor(public id: number, private name: string) {
+    }
+}
+
+let myAutoClass = new classWithAutomaticProperties(1, 'className')
+console.log(`myAutoClass id: ${myAutoClass.id}`)
+console.log(`myAutoClass.name: ${myAutoClass.name}`)
+
+// Property 'name' is private and only accessible within class 'classWithAutomaticProperties'.(2341)
+// 컴파일하면 오류가 발생한다
+// 이 축약 구문은 생성자 함수에만 사용할 수 있다.
+```
+**축약 기법으로 멤버 변수를 자동으로 만들 수 있지만, 코드 읽기가 어려워지므로, 사용하지 말자**
+
+## 읽기 전용 속성 read-only property
+한 번 설정하면 클래스 안에서도 수정할 수 없다
+```
+class ClassWithReadOnly {
+    readonly name: string
+    constructor(_name: string) {
+        this.name = _name
+    }
+    setReadOnly(_name: string) {
+        // 컴파일 에러 생성
+        this.name = _name
+    }
+}
+
+// Cannot assign to 'name' because it is a read-only property.(2540)
+```
+
+## 클래스 속성 접근자 Class property Accessors
+
+```
+class ClassWithAccessors {
+    private _id : number
+    get id() {
+        console.log(`inside get id()`)
+        return this._id
+    }
+    set id(value: number) {
+        console.log(`inside set id()`)
+        this._id = value
+    }
+}
+
+let classWithAccessors = new ClassWithAccessors()
+classWithAccessors.id = 2
+console.log(`id property is set to ${classWithAccessors.id}`)
+```
+*ES5 에만 있는 기능이기 떄문에 IE8 같은 데서는 js 런타임 오류가 난다*
+
+## 정적 함수
+인스턴스를 만들지 않고 호출 가능한 클래스 함수
+```
+class StaticClass {
+    static printTwo() {
+        console.log(`2`)
+    }
+}
+
+StaticClass.printTwo()
+```
+
+## 정적 속성
+```
+class StaticProperty {
+    static count = 0
+    updateCount() {
+        StaticProperty.count ++
+    }
+}
+
+let firstInstance = new StaticProperty()
+
+console.log(`StaticProperty.count = ${StaticProperty.count}`)
+firstInstance.updateCount()
+console.log(`StaticProperty.count = ${StaticProperty.count}`)
+
+let secondInstance = new StaticProperty()
+secondInstance.updateCount()
+console.log(`StaticProperty.count = ${StaticProperty.count}`)
+// 클래스 인스턴스 사이에서 공유된다.
+// 결과:
+// StaticProperty.count = 0
+// StaticProperty.count = 1
+// StaticProperty.count = 2
+```
+
+
 
 
 
