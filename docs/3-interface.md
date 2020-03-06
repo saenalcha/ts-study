@@ -472,6 +472,7 @@ class MultipleInterfaces implements
 ```
 
 ## super 키워드
+타입스크립트에서는 super 키워드로 기반 클래스의 같은 이름을 가진 함수를 호출할 수 있다.
 ```
 class BaseClassWithConstructor {
     private id: number
@@ -489,3 +490,36 @@ class DerivedClassWithConstructor extends
         }
 }
 ```
+
+## 함수 오버로딩
+
+```
+class BaseClassWithFunction {
+    public id: number
+    getProperties() : string {
+        return `id: ${this.id}`
+    }
+}
+
+class DerivedClassWithFunction extends
+    BaseClassWithFunction {
+        public name: string
+        getProperties() : string {
+            return `${super.getProperties()}`
+            + ` , name: ${this.name}`
+        }
+    }
+}
+
+let derivedClassWithFunction = new DerivedClassWithFunction()
+derivedClassWithFunction.id = 1
+derivedClassWithFunction.name = "derivedName"
+console.log(derivedClassWithFunction.getProperties())
+// 결과:
+// id: 1 , name: derivedName
+```
+
+
+
+
+
