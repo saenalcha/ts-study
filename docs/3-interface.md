@@ -492,7 +492,7 @@ class DerivedClassWithConstructor extends
 ```
 
 ## 함수 오버로딩
-
+super 키워드로 기반 클래스의 함수 호출이 가능하다
 ```
 class BaseClassWithFunction {
     public id: number
@@ -519,6 +519,31 @@ console.log(derivedClassWithFunction.getProperties())
 // id: 1 , name: derivedName
 ```
 
+## protected 클래스 멤버
+
+```
+class ClassUsingProtected {
+    protected id : number
+    public getId() {
+        return this.id
+    }
+}
+
+class DerivedFromProtected extends
+    ClassUsingProtected {
+        constructor() {
+            super()
+            this.id = 0
+    }
+}
+
+let derivedFromProtected = new DerivedFromProtected()
+derivedFromProtected.id = 1 // 여기서 컴파일 에러 발생
+console.log(`getId returns: ${derivedFromProtected.getId()}`)
+
+// 컴파일 에러 발생
+// Property 'id' is protected and only accessible within class 'ClassUsingProtected' and its subclasses.(2445)
+```
 
 
 
