@@ -545,6 +545,211 @@ console.log(`getId returns: ${derivedFromProtected.getId()}`)
 // Property 'id' is protected and only accessible within class 'ClassUsingProtected' and its subclasses.(2445)
 ```
 
+## 추상 클래스
+인터페이스를 만들지 못함. 함수 구현이 가능.
+```
+class Employee {
+    public id: number
+    public name: string
+    printDetails() {
+        console.log(`id: ${this.id}`)
+        + `, name ${this.name}` )
+    }
+}
 
+class Manager {
+    public id: number
+    public name: string
+    public Employees: Employee[]
+    printDetails() {
+        console.log(`id: ${this.id} `
+        + `, name ${this.name}, `
+        + ` employeeCount ${this.Employees.length}`)
+    }
+}
 
+abstract class AbstractEmployee {
+    public id: number
+    public name: string
+    abstract getDetails(): string
+    public printDetails() {
+        console.log(this.getDetails())
+    }
+}
 
+class NewEmployee extends AbstractEmployee {
+    getDetails(): string {
+        return `id : ${this.id}, name : ${this.name}`
+        }
+    }
+}
+
+class NewManager extends NewEmployee {
+    public Employees: NewEmployee[]
+    getDetails(): string {
+        return super.getDetails()
+        + `, employeeCount ${this.Employees.length}`
+    }
+}
+// 
+let employee = new NewEmployee()
+employee.id = 1
+employee.name = 'Employee Name'
+
+employee.printDetails()
+// 결과: id : 1, name : Employee Name
+
+//
+let manager = new NewManager()
+manager.id = 2
+manager.name = 'Manager Name'
+manager.Employees = new Array()
+
+manager.printDetails()
+// 결과: id : 2, name : Manager Name, employeeCount 0
+```
+추상 클래스와 상속을 사용하면 코드가 명확해지고 재사용성이 높아진다. /
+추상화, 상속, 다형성, 캡슐화는 개체지향 디자인의 기본 개념들이다. /
+살펴본 대로 타입 스크립트는 객체지향 디자인 원칙들을 통합해 깨끗하고 좋은 자바스크립트 코드를 작성하게 해준다. 
+
+## 자바스크립트 클로저
+```
+function TestClosure(value) {
+    this._value = value
+    function printValue() {
+        console.log(this._value)
+    }
+    return printValue
+}
+
+var myClosure = TestClosure(12)
+myClosure
+
+var BaseClassWithConstructor = (function () {
+    function BaseClassWithConstructor(_id) {
+        this.id = _id
+    }
+    return BaseClassWithConstructor
+})()
+```
+
+# 인터페이스, 클래스 , 상속 - 팩토리 패턴
+팩토리 클래스가 사용 가능한 여러 클래스 중 제공되는 정보에 알맞은 인터페이스를 반환하는 패턴
+
+### IPerson 인터페이스
+```
+// 원서에 있는데 한글판에 빠져있음 🤷‍♂️😾😈👺🤡🤬😨
+enum PersonCategory {
+    Infant,
+    Child,
+    Adult
+}
+
+interface IPerson {
+    Category: PersonCategory
+    canSignContracts(): boolean
+    printDetails()
+}
+
+abstract class Person implements IPerson {
+    Category: PersonCategory
+    private DateOfBirth: Date
+    constructor(dateOfBirth: Date) {
+        this.DateOfBirth = dateOfBirth
+    }
+    abstract canSignContracts(): boolean
+    printDetails() : void {
+        console.log(`Person : `)
+        console.log(`Date of Birth : `
+        + `${this.DateOfBirth.toDateString()}`)
+        console.log(`Category : `
+        + `${PersonCategory[this.Category]}`)
+        console.log(`Can sign : `
+        + `${this.canSignContracts()}`)
+    }
+}
+```
+
+### 특별 클래스
+```
+class Infant extends Person {
+    constructor(dateOfBirth: Date) {
+        super(dateOfBirth)
+        this.Category = PersonCategory.Infant
+    }
+    canSignContracts(): boolean { return false }
+}
+
+class Child extends Person {
+    constructor(dateOfBirth: Date) {
+        super(dateOfBirth)
+        this.Category = PersonCategory.Child
+    }
+    canSignContracts(): boolean { return false }
+}
+
+class Adult extends Person {
+    constructor(dateOfBirth: Date) {
+        super(dateOfBirth)
+        this.Category = PersonCategory.Adult
+    }
+    canSignContracts(): boolean { return true }
+}
+```
+
+### 팩토리 클래스
+```
+class PersonFactory {
+    getPerson(dateOfBirth: Date): IPerson {
+        let dateNow = new Date()
+        let currentMonth = dateNow.getMonth() + 1
+        let currentDate = dateNow.getDate()
+
+        let dateTwoYearsAgo = new Date(
+            dateNow.getFullYear() - 2,
+            currentMonth, currentDate)
+        
+        let date18YearsAgo = new Date(
+            dateNow.getFullYear() - 18,
+            currentMonth, currentDate)
+        if (dateOfBirth >= dateTwoYearsAgo) {
+            return new Infant(dateOfBirth)
+        }
+        if (dateOfBirth >= date18YearsAgo) {
+            return new Child(dateOfBirth)
+        }
+        return new Adult(dateOfBirth)
+    }
+}
+```
+
+### 팩토리 클래스 사용
+```
+let factory = new PersonFactory()
+let p1 = factory.getPerson(new Date(2015, 0, 20))
+p1.printDetails()
+let p2 = factory.getPerson(new Date(2000, 0, 20))
+p2.printDetails()
+let p3 = factory.getPerson(new Date(1969, 0, 20))
+p3.printDetails()
+
+결과:
+Person : 
+Date of Birth : Tue Jan 20 2015
+Category : Child
+Can sign : false
+Person : 
+Date of Birth : Thu Jan 20 2000
+Category : Adult
+Can sign : true
+Person : 
+Date of Birth : Mon Jan 20 1969
+Category : Adult
+Can sign : true
+```
+* Infant, Child, Adult 클래스는 분류와 계약서 사인 가능 여부만 신경쓴다.
+* Person 추상 기반 클래스는 IPerson 인터페이스와 관련된 로직만 신경쓴다.
+* PersonalFactory 클래스는 생년월일과 관계된 로직에만 신경 쓴다. 
+
+객체 지향 디자인 패턴은 유지보수 가능하며 확장 가능한 좋은 코드를 작성하는데 도움이 된다.  
+_good, extensible, and maintainable code_
